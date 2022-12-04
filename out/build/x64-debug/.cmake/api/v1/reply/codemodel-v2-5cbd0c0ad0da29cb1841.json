@@ -1,0 +1,77 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "CSE167_FA22_HW3",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "CopyModels::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-CopyModels-Debug-564861a04efbf96c0c79.json",
+					"name" : "CopyModels",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "CopyShaders::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-CopyShaders-Debug-5d1b81f63788c2a9818f.json",
+					"name" : "CopyShaders",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ModelViewer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ModelViewer-Debug-4f5c7c253691b03f91c1.json",
+					"name" : "ModelViewer",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Michael/cse167/hw3rt/out/build/x64-debug",
+		"source" : "C:/Users/Michael/cse167/hw3rt"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}
