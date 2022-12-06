@@ -6,7 +6,7 @@ Scene.cpp contains the implementation of the draw command
 #include "RTObj.h"
 
 // The scene init definition 
-#include "RTScene.inl"
+#include "RTSceneTest.inl"
 
 
 using namespace glm;
@@ -73,8 +73,10 @@ void RTScene::buildTriangleSoup(void){
             shader -> material  = ( cur -> models[i] ) -> material;
             shader -> setUniforms();
 
+
             auto elements = (cur->models[i])->geometry->elements;
             auto material = (cur->models[i])->material;
+
             for (int ind = 0; ind < elements.size(); ind++) {
                 elements[ind].material = material;
                 triangle_soup.push_back(elements[ind]);

@@ -8,13 +8,18 @@
 #include "Screenshot.h"
 #include "RTScene.h"
 #include "Image.h"
+#include "Scene.h"
 
+#include <Ray.h>
+#include "RayTracer.h"
 
-static const int width = 800;
-static const int height = 600;
+static bool rt_mode = false;
+static const int width = 200;
+static const int height = 150;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
-static RTScene scene;
+static Scene scene;
+static RTScene rtscene;
 static Image image(width, height);
 
 #include "hw3AutoScreenshots.h"
@@ -42,7 +47,9 @@ void initialize(void){
     
     // Initialize scene
     scene.init();
-    scene.buildTriangleSoup();
+
+    rtscene.init();
+    rtscene.buildTriangleSoup();
 
     image.init();
 
@@ -53,7 +60,13 @@ void initialize(void){
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
-    image.draw();
+    if (rt_mode) {
+        RayTracer::Raytrace(*rtscene.camera, rtscene, image);
+        image.draw();
+    }
+    else {
+        scene.draw();
+    }
     
     glutSwapBuffers();
     glFlush();
@@ -74,20 +87,15 @@ void fillImage() {
     }
 }
 
-void clearImage() {
-    int size = (width * height);
-    for (int ind = 0; ind < size; ind++) {
-        image.pixels[ind] = glm::vec3(0.0f, 0.0f, 0.0f);
-    }
-}
 
 void keyboard(unsigned char key, int x, int y){
     switch(key){
-        case 'i':
-            fillImage();
+        case 'd' :
+            std::cerr << rtscene.triangle_soup.size();
             break;
-        case 'c':
-            clearImage();
+        case 'i':
+            rt_mode = !rt_mode;
+            std::cout << R"(Toggled the raytracer)";
             break;
         case 27: // Escape to quit
             exit(0);

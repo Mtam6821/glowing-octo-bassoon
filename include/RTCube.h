@@ -51,7 +51,7 @@ public:
             20, 21, 22, 20, 22, 23 // Bottom face
         };
 
-        for (int ind = 0; ind < sizeof(indices) / (3 * sizeof(indices[0])); ind += 3) {
+        for (int ind = 0; ind < sizeof(indices) / sizeof(indices[0]); ind += 3) {
             Triangle t = Triangle();
             t.P.push_back(glm::vec3(
                 positions[indices[ind]][0], positions[indices[ind]][1], positions[indices[ind]][2]

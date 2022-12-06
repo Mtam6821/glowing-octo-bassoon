@@ -78,7 +78,7 @@ void RTObj::init(const char * filename){
     }
     std::cout << "done." << std::endl;
     
-    for (int ind = 0; ind < sizeof(indices) / (3 * sizeof(indices[0])); ind += 3) {
+    for (int ind = 0; ind < sizeof(indices) / sizeof(indices[0]); ind += 3) {
         Triangle t = Triangle();
         t.P.push_back(glm::vec3(
             vertices[indices[ind]][0], vertices[indices[ind]][1], vertices[indices[ind]][2]
