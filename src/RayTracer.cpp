@@ -55,7 +55,7 @@ Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height) {
 
 	return ray;
 }//page 10, 18
-Intersection RayTracer::Intersect(Ray ray, Triangle triangle) {
+Intersection& RayTracer::Intersect(Ray ray, Triangle triangle) {
 	glm::mat4 tri_mat = glm::mat4(
 		glm::vec4(triangle.P[0], 1.0f),
 		glm::vec4(triangle.P[1], 1.0f),
@@ -65,27 +65,29 @@ Intersection RayTracer::Intersect(Ray ray, Triangle triangle) {
 	glm::vec4 ray_vec = glm::vec4(ray.dir, 1.0f);
 	glm::vec4 bary_vec = glm::inverse(tri_mat) * ray_vec;
 
+	Triangle* tri = new Triangle(triangle);
 
 	Intersection ret;
 	ret.P = glm::vec3(bary_vec.x * triangle.P[0] + bary_vec.y * triangle.P[1] + bary_vec.z * triangle.P[2]);
 	ret.N = glm::vec3(bary_vec.x * triangle.N[0] + bary_vec.y * triangle.N[1] + bary_vec.z * triangle.N[2]);
 	ret.V = ray.dir;
-	ret.triangle = &triangle;
+	ret.triangle = tri;
 	ret.dist = bary_vec[3];
 
 	return ret;
 } //page 30, 33
 
-Intersection RayTracer::Intersect(Ray ray, RTScene scene) {
+Intersection& RayTracer::Intersect(Ray ray, RTScene scene) {
 	float mindist = INFINITY;
 	Intersection hit;
 	for (int ind = 0; ind < scene.triangle_soup.size(); ind++) { // Find closest intersection; test all objects
 		Triangle t = scene.triangle_soup[ind];
-		Intersection hit_temp = Intersect(ray, t);
-		assert(hit_temp.triangle == &t);
+		Intersection& hit_temp = Intersect(ray, t);
+		assert(hit_temp.triangle != nullptr);
 
 		if (hit_temp.dist < mindist) { // closer than previous hit
 			mindist = hit_temp.dist;
+			//if (hit != nullptr) { delete hit; }
 			hit = hit_temp;
 		}
 	}
