@@ -6,8 +6,8 @@ void specialKey(int key, int x, int y);
 void display(void);
 void saveScreenShot(const char* filename);
 void hw3AutoScreenshots(){
-    scene.camera -> reset();
-    scene.shader -> enablelighting = false;
+    rtscene.camera -> reset();
+    rtscene.shader -> enablelighting = false;
     display();
     saveScreenShot("image-00.png");
     

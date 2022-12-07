@@ -10,12 +10,12 @@
 #include "Image.h"
 #include "Scene.h"
 
-#include <Ray.h>
+#include "Ray.h"
 #include "RayTracer.h"
 
 static bool rt_mode = false;
-static const int width = 200;
-static const int height = 150;
+static const int width = 160;
+static const int height = 120;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static Scene scene;
@@ -59,15 +59,17 @@ void initialize(void){
 
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    
+
+    std::cerr << "test\n";
+
     if (rt_mode) {
-        RayTracer::Raytrace(*rtscene.camera, rtscene, image);
+        RayTracer::Raytrace(*scene.camera, rtscene, image);
         image.draw();
     }
     else {
         scene.draw();
     }
-    
+
     glutSwapBuffers();
     glFlush();
     
@@ -95,7 +97,8 @@ void keyboard(unsigned char key, int x, int y){
             break;
         case 'i':
             rt_mode = !rt_mode;
-            std::cout << R"(Toggled the raytracer)";
+            std::cout << R"(Toggled the raytracer)" << std::endl;
+            glutPostRedisplay();
             break;
         case 27: // Escape to quit
             exit(0);
@@ -107,16 +110,25 @@ void keyboard(unsigned char key, int x, int y){
             saveScreenShot();
             break;
         case 'r':
+
+            rtscene.camera->aspect_default = float(glutGet(GLUT_WINDOW_WIDTH)) / float(glutGet(GLUT_WINDOW_HEIGHT));
+            rtscene.camera->reset();
             scene.camera -> aspect_default = float(glutGet(GLUT_WINDOW_WIDTH))/float(glutGet(GLUT_WINDOW_HEIGHT));
             scene.camera -> reset();
+
             glutPostRedisplay();
             break;
         case 'a':
-            scene.camera -> zoom(0.9f);
+            rtscene.camera->zoom(0.9f);
+            scene.camera->zoom(0.9f);
+
+
             glutPostRedisplay();
             break;
         case 'z':
-            scene.camera -> zoom(1.1f);
+            rtscene.camera->zoom(1.1f);
+            scene.camera->zoom(1.1f);
+
             glutPostRedisplay();
             break;
         case 'l':
@@ -124,6 +136,7 @@ void keyboard(unsigned char key, int x, int y){
             glutPostRedisplay();
             break;
         case ' ':
+            std::cout << R"(Outputting the screenshots?)" << std::endl;
             hw3AutoScreenshots();
             glutPostRedisplay();
             break;

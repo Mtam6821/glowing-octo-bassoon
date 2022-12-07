@@ -17,16 +17,18 @@ inline static glm::vec3 random_vec(float min, float max) {
 }
 
 
-void RayTracer::Raytrace(Camera cam, RTScene scene, Image& image) {
+void RayTracer::Raytrace(Camera cam, RTScene& scene, Image& image) {
 	int w = image.width; int h = image.height;
 	for (int j = 0; j < h; j++) {
-		for (int i = 0; i < w; i++) {
-			Ray ray = RayThruPixel(cam, i, j, w, h);
-			Intersection hit = Intersect(ray, scene);
-
-			assert(hit.triangle->P.size() == 3);
-
-			image.pixels[j*w + i] = FindColor(hit, scene, 1);
+		for (int i = 0; i < w; i++) {		
+			glm::vec3 color = glm::vec3(0.0f);
+			for (int k = 0; k < 10; k++) {		//sampling
+				Ray ray = RayThruPixel(cam, i, j, w, h);
+				Intersection hit = Intersect(ray, scene);
+				color += FindColor(hit, scene, 1);
+			}
+			image.pixels[j * w + i] = (float)0.1 * color;
+			
 		}
 	}
 }//page 9
@@ -65,9 +67,18 @@ Intersection& RayTracer::Intersect(Ray ray, Triangle triangle) {
 	glm::vec4 ray_vec = glm::vec4(ray.dir, 1.0f);
 	glm::vec4 bary_vec = glm::inverse(tri_mat) * ray_vec;
 
+	Intersection ret;
+
+	//return no hit
+	for (int ind = 0; ind < 4; ind++) {
+		if (bary_vec[ind] < 0) {
+			ret.dist = INFINITY;
+			return ret;
+		}
+	}
+
 	Triangle* tri = new Triangle(triangle);
 
-	Intersection ret;
 	ret.P = glm::vec3(bary_vec.x * triangle.P[0] + bary_vec.y * triangle.P[1] + bary_vec.z * triangle.P[2]);
 	ret.N = glm::vec3(bary_vec.x * triangle.N[0] + bary_vec.y * triangle.N[1] + bary_vec.z * triangle.N[2]);
 	ret.V = ray.dir;
@@ -77,17 +88,15 @@ Intersection& RayTracer::Intersect(Ray ray, Triangle triangle) {
 	return ret;
 } //page 30, 33
 
-Intersection& RayTracer::Intersect(Ray ray, RTScene scene) {
+Intersection& RayTracer::Intersect(Ray ray, RTScene& scene) {
 	float mindist = INFINITY;
-	Intersection hit;
+	Intersection hit;  	
 	for (int ind = 0; ind < scene.triangle_soup.size(); ind++) { // Find closest intersection; test all objects
 		Triangle t = scene.triangle_soup[ind];
 		Intersection& hit_temp = Intersect(ray, t);
-		assert(hit_temp.triangle != nullptr);
 
 		if (hit_temp.dist < mindist) { // closer than previous hit
 			mindist = hit_temp.dist;
-			//if (hit != nullptr) { delete hit; }
 			hit = hit_temp;
 		}
 	}
@@ -100,87 +109,9 @@ glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_d
 
 	glm::vec3 v_cam = glm::normalize(hit.V);
 	glm::vec3 n_cam = glm::normalize(hit.N);
-
-	assert(hit.triangle != nullptr);
-	assert(hit.triangle->material != nullptr);
-	if (hit.triangle->P.size() == 0) {
-			return glm::vec4(255.0f, 255.0f, 255.0f, 0.0f);
-	}
-	for (std::pair<std::string, Light*> entry : scene.light) {
-		//get necessary points for calculating v,n,l
-
-		glm::vec4 p_cam = glm::vec4(hit.P, 1.0f);     //position in camera coords
-		glm::vec4 q_cam = (entry.second)->position;   //lightpos in camera coords
-
-		glm::vec3 l_cam = glm::normalize((p_cam.w * q_cam.xyz()) - (q_cam.w * p_cam.xyz()));
-
-		glm::vec3 h_cam = glm::normalize(v_cam + l_cam);
-
-		//check for intersection between l_cam and the triangle (i.e. is hit.dist the same Intersect(l_ray, scene).dist) 
-		//bool isVisible = (hit.dist ==)
-
-
-		//add ambient, diffuse, and specular
-		glm::vec4 tempColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		tempColor += hit.triangle->material->ambient;
-		tempColor += hit.triangle->material->diffuse * glm::max(0.0f, dot(l_cam, n_cam));	//FIXME: visibility
-		tempColor += hit.triangle->material->specular * pow(glm::max(0.0f, dot(n_cam, h_cam)), hit.triangle->material->shininess);
-
-		//multiply by light color and add to sumColor
-		color += (entry.second)->color * tempColor;
-	}
-
-	color += hit.triangle->material->emision;
-
-	/*
-	if (recursion_depth == MAX_DEPTH) {
-		for (std::pair<std::string, Light*> entry : scene.light) {
-			//get necessary points for calculating v,n,l
-
-			glm::vec4 p_cam = glm::vec4(hit.P, 1.0f);     //position in camera coords
-			glm::vec4 q_cam = (entry.second)->position;   //lightpos in camera coords
-
-			glm::vec3 l_cam = glm::normalize((p_cam.w * q_cam.xyz()) - (q_cam.w * p_cam.xyz()));
-
-			glm::vec3 h_cam = glm::normalize(v_cam + l_cam);
-
-			//check for intersection between l_cam and the triangle (i.e. is hit.dist the same Intersect(l_ray, scene).dist) 
-			//bool isVisible = (hit.dist ==)
-
-
-			//add ambient, diffuse, and specular
-			glm::vec4 tempColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-			tempColor += hit.triangle->material->ambient;
-			tempColor += hit.triangle->material->diffuse * glm::max(0.0f, dot(l_cam, n_cam));	//FIXME: visibility
-			tempColor += hit.triangle->material->specular * pow(glm::max(0.0f, dot(n_cam, h_cam)), hit.triangle->material->shininess);
-
-			//multiply by light color and add to sumColor
-			color += (entry.second)->color * tempColor;
-		}
-
-		color += hit.triangle->material->emision;
-	}
-	else {
-		if (rand() % 2 == 0) {		//diffuse
-			glm::vec3 d_cam;	//some random d in the normal hemisphere
-			while (true) {
-				d_cam = random_vec(-1, 1);
-				if (glm::dot(d_cam, n_cam) < 0) { continue; }
-				else { break; }
-			}
-
-			Ray ray2;
-			ray2.dir = d_cam;
-			ray2.p0 = hit.P;
-
-			glm::vec3 diffuse = hit.triangle->material->diffuse.xyz();
-
-			Intersection hit2 = Intersect(ray2, scene);
-			int next = recursion_depth++;
-			glm::vec3 temp = diffuse * FindColor(hit2, scene, next);
-			color += glm::vec4(glm::dot(n_cam, d_cam) * temp, 1.0f);
-		}
-		else {						//specular
+	
+	if (hit.dist < INFINITY) {
+		if (recursion_depth == MAX_DEPTH) {			
 			Ray ray2;
 			ray2.dir = 2 * glm::dot(n_cam, v_cam) * n_cam - v_cam;
 			ray2.p0 = hit.P;
@@ -191,8 +122,39 @@ glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_d
 			glm::vec3 specular = hit.triangle->material->specular.xyz();
 			color += glm::vec4(specular * FindColor(hit2, scene, next), 1.0f);
 		}
+
+		else {
+			for (std::pair<std::string, Light*> entry : scene.light) {
+				//get necessary points for calculating v,n,l
+
+				glm::vec4 p_cam = glm::vec4(hit.P, 1.0f);     //position in camera coords
+				glm::vec4 q_cam = (entry.second)->position;   //lightpos in camera coords
+
+				glm::vec3 l_cam = glm::normalize((p_cam.w * q_cam.xyz()) - (q_cam.w * p_cam.xyz()));
+				glm::vec3 h_cam = glm::normalize(v_cam + l_cam);
+
+				//check for intersection between q_cam and the triangle (i.e. is hit.dist the same Intersect(l_ray, scene).dist) 
+				Ray light_ray;
+				light_ray.p0 = hit.P;
+				light_ray.dir = glm::normalize(glm::vec3(q_cam) - light_ray.p0);
+
+				Intersection light_hit = Intersect(light_ray, scene);
+				if (light_hit.dist < glm::length(glm::vec3(q_cam) - light_ray.p0)) { continue; }
+
+				//add ambient, diffuse, and specular
+				glm::vec4 tempColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+				//tempColor += hit.triangle->material->ambient;
+				tempColor += hit.triangle->material->diffuse * glm::max(0.0f, dot(l_cam, n_cam));
+				//tempColor += hit.triangle->material->specular * pow(glm::max(0.0f, dot(n_cam, h_cam)), hit.triangle->material->shininess);
+
+				//multiply by light color and add to sumColor
+				color += (entry.second)->color * tempColor;
+			}
+		}
 	}
-	*/
+	
+	//color += hit.triangle->material->emision;
+	
 	return color;
 
 } //page 15

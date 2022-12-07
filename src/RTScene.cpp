@@ -6,8 +6,9 @@ Scene.cpp contains the implementation of the draw command
 #include "RTObj.h"
 
 // The scene init definition 
-#include "RTSceneTest.inl"
+#include "RTScene.inl"
 
+#define GLM_SWIZZLE
 
 using namespace glm;
 void RTScene::buildTriangleSoup(void){
@@ -75,10 +76,19 @@ void RTScene::buildTriangleSoup(void){
 
 
             auto elements = (cur->models[i])->geometry->elements;
-            auto material = (cur->models[i])->material;
-
+            auto material = (cur->models[i])->material; 
             for (int ind = 0; ind < elements.size(); ind++) {
                 elements[ind].material = material;
+                for (int j = 0; j < elements[ind].P.size(); j++) {
+                    glm::vec4 p = glm::vec4(elements[ind].P[j], 1.0f);
+                    p = model_VM * p;
+                    elements[ind].P[j] = glm::vec3(p) / p.w;
+                    glm::vec4 n = glm::vec4(elements[ind].N[j], 1.0f);
+                    n = glm::mat4(glm::transpose(glm::inverse(model_VM))) * n;
+                    elements[ind].N[j] *= glm::vec3(n) / n.w;
+                }
+               
+
                 triangle_soup.push_back(elements[ind]);
             }
         }
@@ -91,7 +101,18 @@ void RTScene::buildTriangleSoup(void){
         
     } // End of DFS while loop.
     // HW3: Your code will only be above this line.
-    
+
+    for (Triangle t : triangle_soup) {
+        int count = 0;
+        for (Triangle t2 : triangle_soup) {
+            if (t.P[0] == t2.P[0]) {
+                count++;
+            }
+        }
+        //std::cerr << count << std::endl;
+        //assert(count == 1);
+        assert(t.material != NULL);
+    }
 }
 
 
