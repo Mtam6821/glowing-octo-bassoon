@@ -50,8 +50,6 @@ void main (void){
             tempColor   += diffuse  * max( 0.0f, dot(l_cam, n_cam) );
             tempColor   += specular * pow( max(0.0f, dot(n_cam, h_cam)), shininess );   
 
-            //prob: bulb specular appears wrong (zero for most angles)
-
             //multiply by light color and add to sumColor
             sumColor += lightcolors[i] * tempColor;
         }

@@ -10,10 +10,10 @@ void RTScene::init(void){
     // Create a geometry palette
     geometry["cube"] = new RTCube;
     geometry["teapot"] = new RTObj;
-    geometry["bunny"] = new RTObj;
+    //geometry["bunny"] = new RTObj;
     geometry["cube"] -> init();
     geometry["teapot"] -> init("models/teapot.obj");
-    geometry["bunny"] -> init("models/bunny.obj");
+    //geometry["bunny"] -> init("models/bunny.obj");
     
     // Create a material palette
     material["wood"] = new Material;
@@ -54,9 +54,9 @@ void RTScene::init(void){
     model["wood cube"] -> geometry = geometry["cube"];
     model["wood cube"] -> material = material["wood"];
 
-    model["bunny"] = new RTModel;
-    model["bunny"] -> geometry = geometry["bunny"];
-    model["bunny"] -> material = material["psilver"];
+    //model["bunny"] = new RTModel;
+    //model["bunny"] -> geometry = geometry["bunny"];
+    //model["bunny"] -> material = material["psilver"];
 
     model["bulb"] = new RTModel;
     model["bulb"] -> geometry = geometry["cube"];
@@ -66,9 +66,9 @@ void RTScene::init(void){
     model["teapot1"]->geometry = geometry["teapot"];
     model["teapot1"]->material = material["pbronze"];
 
-    model["teapot2"] = new RTModel;
-    model["teapot2"]->geometry = geometry["teapot"];
-    model["teapot2"]->material = material["pgold"];
+    //model["teapot2"] = new RTModel;
+    //model["teapot2"]->geometry = geometry["teapot"];
+    //model["teapot2"]->material = material["pgold"];
     
     // Create a light palette
     light["sun"] = new Light;
@@ -80,12 +80,12 @@ void RTScene::init(void){
     light["bulb"] -> color = vec4(0.3f,0.4f,1.0f,1.0f);
     
     // Build the scene graph
-    node["teapot2"]  = new RTNode;
+    //node["teapot2"]  = new RTNode;
     node["bulb"]     = new RTNode;
     node["teapot1"]  = new RTNode;
     node["scaffold"] = new RTNode;
     node["surface"]  = new RTNode;
-    node["bunny"]    = new RTNode;
+    //node["bunny"]    = new RTNode;
 
     node["scaffold"]->childnodes.push_back(node["surface"]);        //third place
     node["scaffold"]->childtransforms.push_back(translate(vec3(1.4f, 0.0f, 0.0f)) * scale(vec3(1.0f, 1.0f, 1.0f)));
@@ -93,24 +93,24 @@ void RTScene::init(void){
     node["scaffold"]->childtransforms.push_back(translate(vec3(-1.4f, 0.4f, 0.0f)) * scale(vec3(1.0f, 2.0f, 1.0f)));
     node["scaffold"]->childnodes.push_back(node["surface"]);        //first place
     node["scaffold"]->childtransforms.push_back(translate(vec3(0.0f, 0.8f, 0.0f)) * scale(vec3(1.0f, 3.0f, 1.0f)));
-    node["scaffold"]->childnodes.push_back(node["bunny"]);          //second-place bunny
-    node["scaffold"]->childtransforms.push_back(translate(vec3(-1.4f, 0.8f, 0.0f)) * rotate(90.0f * float(M_PI) / 180.0f, vec3(0.0f, 1.0f, 0.0f)));
+    //node["scaffold"]->childnodes.push_back(node["bunny"]);          //second-place bunny
+    //node["scaffold"]->childtransforms.push_back(translate(vec3(-1.4f, 0.8f, 0.0f)) * rotate(90.0f * float(M_PI) / 180.0f, vec3(0.0f, 1.0f, 0.0f)));
     node["scaffold"]->childnodes.push_back(node["teapot1"]);        //third place teapot
     node["scaffold"]->childtransforms.push_back(translate(vec3(1.4f, 0.2f, 0.0f)) * rotate(-120.0f * float(M_PI) / 180.0f, vec3(0.0f, 1.0f, 0.0f)));
-    node["scaffold"]->childnodes.push_back(node["teapot2"]);        //first place teapot
-    node["scaffold"]->childtransforms.push_back(translate(vec3(0.0f, 1.6f, 0.0f)) * rotate(-45.0f * float(M_PI) / 180.0f, vec3(0.0f, 0.0f, 1.0f)));
+    //node["scaffold"]->childnodes.push_back(node["teapot2"]);        //first place teapot
+    //node["scaffold"]->childtransforms.push_back(translate(vec3(0.0f, 1.6f, 0.0f)) * rotate(-45.0f * float(M_PI) / 180.0f, vec3(0.0f, 0.0f, 1.0f)));
 
     node["surface"] -> models.push_back(model["wood cube"]);
     node["surface"] -> modeltransforms.push_back(translate(vec3(0.0f, -0.1f, 0.0f)) * scale(vec3(1.4f, 0.6f, 1.8f)));
 
-    node["bunny"]->models.push_back(model["bunny"]);
-    node["bunny"]->modeltransforms.push_back(scale(vec3(0.8f)) * translate(vec3(0.0f, 1.0f, 0.0f)));
+    //node["bunny"]->models.push_back(model["bunny"]);
+    //node["bunny"]->modeltransforms.push_back(scale(vec3(0.8f)) * translate(vec3(0.0f, 1.0f, 0.0f)));
 
     node["teapot1"]->models.push_back(model["teapot1"]);
     node["teapot1"]->modeltransforms.push_back(translate(vec3(-0.1f, 0.0f, 0.1f)) * scale(vec3(0.9f)));
     
-    node["teapot2"]->models.push_back(model["teapot2"]);
-    node["teapot2"]->modeltransforms.push_back(translate(vec3(-0.3f, -0.1f, -0.1f)) * scale(vec3(0.8f, 1.8f, 0.8f))* scale(vec3(0.9f)));
+    //node["teapot2"]->models.push_back(model["teapot2"]);
+    //node["teapot2"]->modeltransforms.push_back(translate(vec3(-0.3f, -0.1f, -0.1f)) * scale(vec3(0.8f, 1.8f, 0.8f))* scale(vec3(0.9f)));
 
     node["world"] -> childnodes.push_back( node["scaffold"] );
     node["world"] -> childtransforms.push_back( mat4(1.0f) );

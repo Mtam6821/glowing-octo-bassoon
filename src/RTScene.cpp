@@ -6,7 +6,8 @@ Scene.cpp contains the implementation of the draw command
 #include "RTObj.h"
 
 // The scene init definition 
-#include "RTScene.inl"
+//#include "RTScene.inl"
+#include "RTSceneTest.inl"
 
 #define GLM_SWIZZLE
 
@@ -46,8 +47,8 @@ void RTScene::buildTriangleSoup(void){
     for ( const auto &n : node ) total_number_of_edges += n.second->childnodes.size();
     
     // If you want to print some statistics of your scene graph
-    // std::cout << "total numb of nodes = " << node.size() << std::endl;
-    // std::cout << "total number of edges = " << total_number_of_edges << std::endl;
+     std::cout << "total numb of nodes = " << node.size() << std::endl;
+     std::cout << "total number of edges = " << total_number_of_edges << std::endl;
     
     while( ! dfs_stack.empty() ){
         // Detect whether the search runs into infinite loop by checking whether the stack is longer than the number of edges in the graph.
@@ -76,20 +77,20 @@ void RTScene::buildTriangleSoup(void){
 
 
             auto elements = (cur->models[i])->geometry->elements;
-            auto material = (cur->models[i])->material; 
             for (int ind = 0; ind < elements.size(); ind++) {
-                elements[ind].material = material;
-                for (int j = 0; j < elements[ind].P.size(); j++) {
-                    glm::vec4 p = glm::vec4(elements[ind].P[j], 1.0f);
+                Triangle currentTri = elements[ind];
+
+                currentTri.material = (cur->models[i])->material;        //set mat
+                for (int j = 0; j < currentTri.P.size(); j++) {
+
+                    glm::vec4 p = glm::vec4(currentTri.P[j], 1.0f);
                     p = model_VM * p;
-                    elements[ind].P[j] = glm::vec3(p) / p.w;
-                    glm::vec4 n = glm::vec4(elements[ind].N[j], 1.0f);
-                    n = glm::mat4(glm::transpose(glm::inverse(model_VM))) * n;
-                    elements[ind].N[j] *= glm::vec3(n) / n.w;
+                    currentTri.P[j] = glm::vec3(p) / p.w;
+
+                    currentTri.N[j] = glm::normalize(glm::transpose(glm::inverse(glm::mat3(model_VM))) * currentTri.N[j]);
                 }
                
-
-                triangle_soup.push_back(elements[ind]);
+                triangle_soup.push_back(currentTri);
             }
         }
         
@@ -101,18 +102,7 @@ void RTScene::buildTriangleSoup(void){
         
     } // End of DFS while loop.
     // HW3: Your code will only be above this line.
-
-    for (Triangle t : triangle_soup) {
-        int count = 0;
-        for (Triangle t2 : triangle_soup) {
-            if (t.P[0] == t2.P[0]) {
-                count++;
-            }
-        }
-        //std::cerr << count << std::endl;
-        //assert(count == 1);
-        assert(t.material != NULL);
-    }
+    std::cout << "triangle soup built" << std::endl;
 }
 
 

@@ -14,8 +14,10 @@
 #include "RayTracer.h"
 
 static bool rt_mode = false;
-static const int width = 160;
-static const int height = 120;
+//static const int width = 144;
+//static const int height = 108;
+static const int width = 200;
+static const int height = 150;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static Scene scene;
@@ -60,15 +62,17 @@ void initialize(void){
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    std::cerr << "test\n";
+    std::cout << R"(Drawing...)";
 
     if (rt_mode) {
-        RayTracer::Raytrace(*scene.camera, rtscene, image);
+        RayTracer::Raytrace(*rtscene.camera, rtscene, image);
         image.draw();
     }
     else {
         scene.draw();
     }
+
+    std::cout << R"(Done)" << std::endl;
 
     glutSwapBuffers();
     glFlush();
@@ -82,14 +86,6 @@ void saveScreenShot(const char* filename = "test.png"){
     imag.save(filename);
 }
 
-void fillImage() {
-    int size = (width * height) / 2;
-    for (int ind = 0; ind < size; ind++) {
-        image.pixels[ind] = glm::vec3(255.0f, 0.0f, 0.0f);
-    }
-}
-
-
 void keyboard(unsigned char key, int x, int y){
     switch(key){
         case 'd' :
@@ -98,7 +94,7 @@ void keyboard(unsigned char key, int x, int y){
         case 'i':
             rt_mode = !rt_mode;
             std::cout << R"(Toggled the raytracer)" << std::endl;
-            glutPostRedisplay();
+            //glutPostRedisplay();
             break;
         case 27: // Escape to quit
             exit(0);
@@ -107,41 +103,44 @@ void keyboard(unsigned char key, int x, int y){
             printHelp();
             break;
         case 'o': // save screenshot
+            std::cout << R"(Photo)" << std::endl;
             saveScreenShot();
             break;
+        case 'O': // save screenshots
+            std::cout << R"(Photos)" << std::endl;
+            hw3AutoScreenshots();
+            break;
         case 'r':
-
             rtscene.camera->aspect_default = float(glutGet(GLUT_WINDOW_WIDTH)) / float(glutGet(GLUT_WINDOW_HEIGHT));
             rtscene.camera->reset();
             scene.camera -> aspect_default = float(glutGet(GLUT_WINDOW_WIDTH))/float(glutGet(GLUT_WINDOW_HEIGHT));
             scene.camera -> reset();
-
-            glutPostRedisplay();
+            std::cout << R"(Reset)" << std::endl;
+            //glutPostRedisplay();
             break;
         case 'a':
             rtscene.camera->zoom(0.9f);
             scene.camera->zoom(0.9f);
-
-
-            glutPostRedisplay();
+            std::cout << R"(Zoom in)" << std::endl;
+            //glutPostRedisplay();
             break;
         case 'z':
             rtscene.camera->zoom(1.1f);
             scene.camera->zoom(1.1f);
-
-            glutPostRedisplay();
+            std::cout << R"(Zoom out)" << std::endl;
+            //glutPostRedisplay();
             break;
         case 'l':
-            scene.shader -> enablelighting = !(scene.shader -> enablelighting);
-            glutPostRedisplay();
+            //scene.shader -> enablelighting = !(scene.shader -> enablelighting);
+            //glutPostRedisplay();
             break;
-        case ' ':
-            std::cout << R"(Outputting the screenshots?)" << std::endl;
-            hw3AutoScreenshots();
+        case ' ': 
+            //hw3AutoScreenshots();
+            std::cout << R"(Calling draw())" << std::endl;
             glutPostRedisplay();
             break;
         default:
-            glutPostRedisplay();
+            //glutPostRedisplay();
             break;
     }
 }
@@ -149,19 +148,27 @@ void specialKey(int key, int x, int y){
     switch (key) {
         case GLUT_KEY_UP: // up
             scene.camera -> rotateUp(-10.0f);
-            glutPostRedisplay();
+            rtscene.camera->rotateUp(-10.0f);
+            std::cout << R"(Up)" << std::endl;
+            //glutPostRedisplay();
             break;
         case GLUT_KEY_DOWN: // down
             scene.camera -> rotateUp(10.0f);
-            glutPostRedisplay();
+            rtscene.camera->rotateUp(10.0f);
+            std::cout << R"(Down)" << std::endl;
+            //glutPostRedisplay();
             break;
         case GLUT_KEY_RIGHT: // right
             scene.camera -> rotateRight(-10.0f);
-            glutPostRedisplay();
+            rtscene.camera->rotateRight(-10.0f);
+            std::cout << R"(Right)" << std::endl;
+            //glutPostRedisplay();
             break;
         case GLUT_KEY_LEFT: // left
             scene.camera -> rotateRight(10.0f);
-            glutPostRedisplay();
+            rtscene.camera->rotateRight(10.0f);
+            std::cout << R"(Left)" << std::endl;
+            //glutPostRedisplay();
             break;
     }
 }

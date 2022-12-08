@@ -1,0 +1,17 @@
+# ninja log v5
+0	8	0	clean	9992afb1f91dc381
+4	27	0	CMakeFiles/CopyShaders	9fd77eda725ef191
+63	585	6921650013144003	CMakeFiles/ModelViewer.dir/src/Camera.cpp.obj	2252b5ccbeeaf38
+75	1101	6921650018263993	CMakeFiles/ModelViewer.dir/src/main.cpp.obj	9300c4b8ec374f05
+1	47	0	CMakeFiles/CopyModels	914a746e94ffc552
+48	920	6921653228458251	CMakeFiles/ModelViewer.dir/src/RayTracer.cpp.obj	5087482ecb8f0810
+71	911	6921650016403989	CMakeFiles/ModelViewer.dir/src/RTObj.cpp.obj	eae31f27ceed91db
+78	718	6921650014474010	CMakeFiles/ModelViewer.dir/src/Shader.cpp.obj	f3beb7856c5de29f
+65	886	6921650016143996	CMakeFiles/ModelViewer.dir/src/Obj.cpp.obj	26802f92971bca44
+73	1142	6921650018683978	CMakeFiles/ModelViewer.dir/src/Scene.cpp.obj	50be76e3fb15b79b
+50	967	6921651588976600	CMakeFiles/ModelViewer.dir/src/RTScene.cpp.obj	edf7e57867f77299
+920	1066	6921653229688201	ModelViewer.exe	efcab91571bdba02
+4	29	0	CMakeFiles/CopyShaders	9fd77eda725ef191
+1	48	0	CMakeFiles/CopyModels	914a746e94ffc552
+48	922	6921653522732029	CMakeFiles/ModelViewer.dir/src/RayTracer.cpp.obj	5087482ecb8f0810
+923	1048	6921653523772007	ModelViewer.exe	efcab91571bdba02
