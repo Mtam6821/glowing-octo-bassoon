@@ -7,7 +7,8 @@ Scene.cpp contains the implementation of the draw command
 
 // The scene init definition 
 //#include "RTScene.inl"
-#include "RTSceneTest.inl"
+//#include "RTSceneTest.inl"
+#include "OriginalRTScene.inl"
 
 #define GLM_SWIZZLE
 

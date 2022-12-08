@@ -35,7 +35,7 @@ void RayTracer::Raytrace(Camera cam, RTScene& scene, Image& image) {
 			Intersection hit = Intersect(ray, scene);
 			glm::vec3 color = FindColor(hit, scene, 1);
 			
-			image.pixels[j * w + i] = (color == glm::vec3(0.0f)) ? glm::vec3(0.1f,0.2f,0.3f) : color;
+			image.pixels[((h-j-1) * w) + i] = (color == glm::vec3(0.0f)) ? glm::vec3(0.1f,0.2f,0.3f) : color;
 
 			
 		}
@@ -62,8 +62,8 @@ Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height) {
 	glm::vec3 w = glm::normalize(cam.eye - cam.target);
 	glm::vec3 u = glm::cross(cam.up, w);
 	glm::vec3 v = glm::cross(w, u);
-
-	float angle = glm::tan(cam.fovy / 2);
+	float fovy_rad = cam.fovy* M_PI / 180.0f;
+	float angle = glm::tan(fovy_rad / 2);
 
 	ray.dir = glm::normalize((alpha * a * angle * u) + (beta * angle * v) - w);
 
@@ -134,7 +134,8 @@ glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_d
 			//check for intersection between light and triangle 
 			//i.e. shadow
 			Ray light_ray;			//new ray
-			light_ray.p0 = hit.P;
+			glm::vec3 jitter = (hit.N * 0.1f);
+			light_ray.p0 = hit.P + jitter;
 			light_ray.dir = l_vec;
 			Intersection light_hit = Intersect(light_ray, scene);
 
@@ -152,8 +153,8 @@ glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_d
 
 				Ray ray2;	//specular refl ray
 				ray2.dir = (2 * glm::dot(n_vec, v_vec) * n_vec) - v_vec;
-				//glm::vec3 jitter = (hit.N * 0.1f);
-				ray2.p0 = hit.P;
+				glm::vec3 jitter = (hit.N * 0.1f);
+				ray2.p0 = hit.P + jitter;
 				Intersection& hit2 = Intersect(ray2, scene);
 
 				if (hit2.dist < INFINITY) {
